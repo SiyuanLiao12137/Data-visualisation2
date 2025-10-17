@@ -1,0 +1,61 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 800,
+    "height": 600,
+    "title": {
+      "text": "Australian Domestic Flight Routes",
+      "fontSize": 20
+    },
+    "projection": {
+      "type": "mercator",
+      "center": [133, -28],
+      "scale": 700
+    },
+    "layer": [
+      {
+        "data": {
+          "url": "australia.json",
+          "format": {
+            "type": "topojson",
+            "feature": "australia"
+          }
+        },
+        "mark": {
+          "type": "geoshape",
+          "fill": "#e8f4f8",
+          "stroke": "#4a90a4",
+          "strokeWidth": 2
+        }
+      },
+      {
+        "data": {
+          "values": [
+            {"origin": "Sydney", "dest": "Melbourne", "origin_lat": -33.9461, "origin_lon": 151.1772, "dest_lat": -37.6690, "dest_lon": 144.8410, "flights": 120},
+            {"origin": "Sydney", "dest": "Brisbane", "origin_lat": -33.9461, "origin_lon": 151.1772, "dest_lat": -27.3842, "dest_lon": 153.1175, "flights": 95},
+            {"origin": "Melbourne", "dest": "Brisbane", "origin_lat": -37.6690, "origin_lon": 144.8410, "dest_lat": -27.3842, "dest_lon": 153.1175, "flights": 75}
+          ]
+        },
+        "mark": {"type": "rule", "color": "#3498db", "strokeWidth": 3, "opacity": 0.7},
+        "encoding": {
+          "longitude": {"field": "origin_lon", "type": "quantitative"},
+          "latitude": {"field": "origin_lat", "type": "quantitative"},
+          "longitude2": {"field": "dest_lon"},
+          "latitude2": {"field": "dest_lat"}
+        }
+      },
+      {
+        "data": {
+          "values": [
+            {"city": "Sydney", "lat": -33.9461, "lon": 151.1772},
+            {"city": "Melbourne", "lat": -37.6690, "lon": 144.8410},
+            {"city": "Brisbane", "lat": -27.3842, "lon": 153.1175}
+          ]
+        },
+        "mark": {"type": "circle", "size": 300, "color": "#e74c3c"},
+        "encoding": {
+          "longitude": {"field": "lon", "type": "quantitative"},
+          "latitude": {"field": "lat", "type": "quantitative"}
+        }
+      }
+    ]
+  }

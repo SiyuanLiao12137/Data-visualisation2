@@ -1,0 +1,152 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 900,
+  "height": 700,
+  "title": {
+    "text": "Australian Domestic Flight Network",
+    "fontSize": 22,
+    "fontWeight": "bold"
+  },
+
+  "params": [
+    {
+      "name": "year_select",
+      "value": 2019,
+      "bind": {
+        "input": "select",
+        "options": [1984, 1990, 1995, 2000, 2005, 2010, 2015, 2019],
+        "name": "📅 Year: "
+      }
+    }
+  ],
+
+  "layer": [
+    {
+      "data": {
+        "url": "../AustraliaMap.json",
+        "format": {"type": "topojson", "feature": "australia"}
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#e8f4f8",
+        "stroke": "#34495e",
+        "strokeWidth": 1.5
+      },
+      "projection": {"type": "mercator", "center": [133, -28], "scale": 800}
+    },
+
+    {
+      "data": {"url": "../data/audomcitypairs-201912.csv"},
+      "transform": [
+        {"filter": "datum.Year == year_select"},
+        {"filter": "datum.Month == 12"},
+        {"filter": "datum.Passenger_Trips > 0"},
+        {"calculate": "upper(datum.City1)", "as": "City1U"},
+        {"calculate": "upper(datum.City2)", "as": "City2U"},
+        {
+          "lookup": "City1U",
+          "from": {
+            "data": {
+              "values": [
+                {"city": "ADELAIDE", "lat": -34.93, "lon": 138.60},
+                {"city": "ALBURY", "lat": -36.07, "lon": 146.91},
+                {"city": "BRISBANE", "lat": -27.47, "lon": 153.03},
+                {"city": "CAIRNS", "lat": -16.92, "lon": 145.78},
+                {"city": "CANBERRA", "lat": -35.28, "lon": 149.13},
+                {"city": "DARWIN", "lat": -12.46, "lon": 130.84},
+                {"city": "GOLD COAST", "lat": -28.02, "lon": 153.40},
+                {"city": "HOBART", "lat": -42.88, "lon": 147.33},
+                {"city": "MELBOURNE", "lat": -37.81, "lon": 144.96},
+                {"city": "NEWCASTLE", "lat": -32.93, "lon": 151.78},
+                {"city": "PERTH", "lat": -31.95, "lon": 115.86},
+                {"city": "SYDNEY", "lat": -33.87, "lon": 151.21},
+                {"city": "TOWNSVILLE", "lat": -19.26, "lon": 146.82}
+              ]
+            },
+            "key": "city",
+            "fields": ["lat", "lon"]
+          },
+          "as": ["lat1", "lon1"]
+        },
+        {
+          "lookup": "City2U",
+          "from": {
+            "data": {
+              "values": [
+                {"city": "ADELAIDE", "lat": -34.93, "lon": 138.60},
+                {"city": "ALBURY", "lat": -36.07, "lon": 146.91},
+                {"city": "BRISBANE", "lat": -27.47, "lon": 153.03},
+                {"city": "CAIRNS", "lat": -16.92, "lon": 145.78},
+                {"city": "CANBERRA", "lat": -35.28, "lon": 149.13},
+                {"city": "DARWIN", "lat": -12.46, "lon": 130.84},
+                {"city": "GOLD COAST", "lat": -28.02, "lon": 153.40},
+                {"city": "HOBART", "lat": -42.88, "lon": 147.33},
+                {"city": "MELBOURNE", "lat": -37.81, "lon": 144.96},
+                {"city": "NEWCASTLE", "lat": -32.93, "lon": 151.78},
+                {"city": "PERTH", "lat": -31.95, "lon": 115.86},
+                {"city": "SYDNEY", "lat": -33.87, "lon": 151.21},
+                {"city": "TOWNSVILLE", "lat": -19.26, "lon": 146.82}
+              ]
+            },
+            "key": "city",
+            "fields": ["lat", "lon"]
+          },
+          "as": ["lat2", "lon2"]
+        },
+        {"filter": "datum.lat1 != null && datum.lon1 != null && datum.lat2 != null && datum.lon2 != null"}
+      ],
+      "mark": {"type": "rule", "opacity": 0.6, "color": "#3498db", "strokeCap": "round"},
+      "encoding": {
+        "longitude": {"field": "lon1", "type": "quantitative"},
+        "latitude": {"field": "lat1", "type": "quantitative"},
+        "longitude2": {"field": "lon2"},
+        "latitude2": {"field": "lat2"},
+        "strokeWidth": {
+          "field": "Passenger_Trips",
+          "type": "quantitative",
+          "scale": {"type": "sqrt", "range": [0.5, 12]}
+        },
+        "tooltip": [
+          {"field": "City1", "title": "From"},
+          {"field": "City2", "title": "To"},
+          {"field": "Passenger_Trips", "title": "Passengers", "format": ","}
+        ]
+      },
+      "projection": {"type": "mercator", "center": [133, -28], "scale": 800}
+    },
+
+    {
+      "data": {"url": "../data/cities.json"},
+      "mark": {
+        "type": "circle",
+        "size": 200,
+        "fill": "#e74c3c",
+        "stroke": "white",
+        "strokeWidth": 2.5
+      },
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "tooltip": {"field": "city", "title": "City"}
+      },
+      "projection": {"type": "mercator", "center": [133, -28], "scale": 800}
+    },
+
+    {
+      "data": {"url": "../data/cities.json"},
+      "mark": {
+        "type": "text",
+        "dy": -15,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#2c3e50"
+      },
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "text": {"field": "city"}
+      },
+      "projection": {"type": "mercator", "center": [133, -28], "scale": 800}
+    }
+  ]
+}
