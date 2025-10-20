@@ -91,6 +91,7 @@
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            min-height: 400px;
         }
         
         .info-box {
@@ -151,6 +152,20 @@
             background: linear-gradient(to right, transparent, #3498db, transparent);
             margin: 40px 0;
         }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 20px;
+            background: #fadbd8;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
     </style>
 </head>
 <body>
@@ -177,7 +192,9 @@
                     Hover over routes to see detailed statistics.
                 </div>
                 <div class="vis-container">
-                    <div id="vis1"></div>
+                    <div id="vis1">
+                        <div class="loading">Loading visualization...</div>
+                    </div>
                 </div>
             </div>
             
@@ -193,7 +210,9 @@
                     in Australia's aviation market structure.
                 </div>
                 <div class="vis-container">
-                    <div id="vis2"></div>
+                    <div id="vis2">
+                        <div class="loading">Loading visualization...</div>
+                    </div>
                 </div>
             </div>
             
@@ -238,49 +257,60 @@
 
     <!-- Embed Visualizations -->
     <script type="text/javascript">
-        // Visualization 1: Flight Network Map
-        vegaEmbed('#vis1', 'flight_map.json', {
-            "actions": {
-                "export": true,
-                "source": false,
-                "editor": false
-            }
-        }).then(function(result) {
-            console.log("✅ Visualization 1 (Flight Network Map) loaded successfully!");
-        }).catch(function(error) {
-            console.error("❌ Error loading Visualization 1:", error);
-            document.getElementById('vis1').innerHTML = 
-                '<p style="color: red; padding: 20px;">Error loading visualization. Please check that flight_map.json is in the same directory.</p>';
-        });
+        // 获取当前页面的完整路径
+        function getBasePath() {
+            const path = window.location.pathname;
+            const dir = path.substring(0, path.lastIndexOf('/') + 1);
+            return window.location.origin + dir;
+        }
         
-        // Visualization 2: Top 10 Routes
-        vegaEmbed('#vis2', 'Top10.json', {
-            "actions": {
-                "export": true,
-                "source": false,
-                "editor": false
+        // 尝试多种路径方式加载
+        function loadVisualization(elementId, filename, visualizationName) {
+            const paths = [
+                // 方式1: 相对路径
+                './' + filename,
+                // 方式2: 绝对路径
+                getBasePath() + filename,
+                // 方式3: GitHub raw (备用)
+                'https://raw.githubusercontent.com/siyuanliao12137/Data-visualisation2/main/' + filename
+            ];
+            
+            let currentPathIndex = 0;
+            
+            function tryLoad() {
+                if (currentPathIndex >= paths.length) {
+                    document.getElementById(elementId).innerHTML = 
+                        '<div class="error">❌ Failed to load ' + filename + 
+                        '<br><br>Please check that the file exists in the repository.</div>';
+                    return;
+                }
+                
+                const currentPath = paths[currentPathIndex];
+                console.log(`Trying to load ${filename} from: ${currentPath}`);
+                
+                vegaEmbed('#' + elementId, currentPath, {
+                    "actions": {
+                        "export": true,
+                        "source": false,
+                        "editor": false
+                    }
+                }).then(function(result) {
+                    console.log(`✅ ${visualizationName} loaded successfully from: ${currentPath}`);
+                }).catch(function(error) {
+                    console.warn(`❌ Failed to load from ${currentPath}:`, error.message);
+                    currentPathIndex++;
+                    tryLoad();
+                });
             }
-        }).then(function(result) {
-            console.log("✅ Visualization 2 (Top 10 Routes) loaded successfully!");
-        }).catch(function(error) {
-            console.error("❌ Error loading Visualization 2:", error);
-            document.getElementById('vis2').innerHTML = 
-                '<p style="color: red; padding: 20px;">Error loading visualization. Please check that Top10.json is in the same directory.</p>';
+            
+            tryLoad();
+        }
+        
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', function() {
+            loadVisualization('vis1', 'flight_map.json', 'Flight Network Map');
+            loadVisualization('vis2', 'Top10.json', 'Top 10 Routes');
         });
     </script>
 </body>
 </html>
-```
-
----
-
-## 📁 最终文件结构
-
-确保你的文件结构是这样的：
-```
-Data-visualisation2/
-├── index.html                    ← 刚才创建的
-├── flight_map.json               ← 地图可视化
-├── Top10.json                    ← Top 10 可视化
-├── cities.json                   ← 城市坐标数据
-└── audomcitypairs-201912.csv     ← 航班数据
