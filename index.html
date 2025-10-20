@@ -1,265 +1,110 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Australian Domestic Flight Analysis | FIT3179 DV2</title>
+    <title>Australian Domestic Flight Network</title>
     
-
+    <!-- Vega, Vega-Lite, and Vega-Embed libraries from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
-            color: #2c3e50;
+            background-color: #f5f5f5;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .header {
-            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
-            color: white;
-            padding: 40px;
+        h1 {
+            color: #333;
             text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: 700;
         }
         
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.95;
-            margin-bottom: 5px;
-        }
-        
-        .header .metadata {
-            font-size: 0.95em;
-            opacity: 0.85;
-            margin-top: 15px;
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
             font-style: italic;
         }
         
-        .content {
-            padding: 40px;
+        #vis {
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
         
-        .section {
-            margin-bottom: 50px;
-        }
-        
-        .section-title {
-            font-size: 1.8em;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-        }
-        
-        .section-description {
-            font-size: 1.1em;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 25px;
+        .error-message {
+            color: #d32f2f;
+            background-color: #ffebee;
             padding: 15px;
-            background: #f8f9fa;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
+            border-radius: 4px;
+            margin: 20px 0;
+            display: none;
         }
         
-        .vis-container {
-            background: #fafafa;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .info-box {
-            background: #e8f4f8;
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 30px;
-            border-left: 5px solid #3498db;
-        }
-        
-        .info-box h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-        
-        .info-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .info-box li {
-            padding: 10px 0;
-            color: #555;
-            line-height: 1.7;
-            font-size: 1.05em;
-        }
-        
-        .info-box li:before {
-            content: "✈️ ";
-            margin-right: 10px;
-        }
-        
-        .footer {
-            background: #34495e;
-            color: white;
+        .loading {
             text-align: center;
-            padding: 30px;
-        }
-        
-        .footer p {
-            margin: 8px 0;
-            font-size: 0.95em;
-        }
-        
-        .footer a {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        
-        .divider {
-            height: 2px;
-            background: linear-gradient(to right, transparent, #3498db, transparent);
-            margin: 40px 0;
+            padding: 40px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>✈️ Australian Domestic Flight Analysis</h1>
-            <p>Interactive Visualization of Flight Networks & Route Rankings</p>
-            <div class="metadata">
-                FIT3179 Data Visualization 2
-            </div>
-        </div>
+        <h1>Australian Domestic Flight Network</h1>
+        <p class="subtitle">December passenger data (1984-2019) | Source: data.gov.au</p>
         
-        <!-- Content -->
-        <div class="content">
-            
-            <!-- Visualization 1: Flight Network Map -->
-            <div class="section">
-                <h2 class="section-title">📍 Visualization 1: Flight Network Map</h2>
-                <div class="section-description">
-                    This interactive map visualizes the Australian domestic flight network from 1984 to 2019. 
-                    The width of each line represents passenger volume, while the color indicates the load factor 
-                    (seat occupancy rate). Use the year slider to explore how the network evolved over time. 
-                    Numbers on routes indicate Top 10 rankings.
-                </div>
-                <div class="vis-container">
-                    <div id="vis1"></div>
-                </div>
-            </div>
-            
-            <div class="divider"></div>
-            
-            <!-- Visualization 2: Top 10 Routes (Alternative) -->
-            <div class="section">
-                <h2 class="section-title">🏆 Visualization 2: Top 10 Busiest Routes</h2>
-                <div class="section-description">
-                    This bar chart ranks the top 10 busiest domestic routes by annual passenger volume. 
-                    The color gradient represents load factor efficiency. Drag the year slider to see how 
-                    route rankings changed over the past 35 years. Sydney-Melbourne consistently dominates 
-                    as Australia's busiest corridor.
-                </div>
-                <div class="vis-container">
-                    <div id="vis2"></div>
-                </div>
-            </div>
-            
-            <!-- Key Insights -->
-            <div class="info-box">
-                <h3>🔍 Key Insights</h3>
-                <ul>
-                    <li><strong>Sydney-Melbourne corridor</strong> has consistently been the busiest route since 1984, often carrying over 1 million passengers annually</li>
-                    <li><strong>Passenger volumes</strong> have grown dramatically - from ~500K in 1984 to over 1.5M by 2019 on major routes</li>
-                    <li><strong>Load factors</strong> improved significantly, indicating airlines became more efficient at filling seats (from ~70% to 85%+)</li>
-                    <li><strong>Eastern seaboard</strong> (Sydney-Melbourne-Brisbane triangle) dominates with the highest passenger traffic and frequency</li>
-                    <li><strong>Network expansion</strong> is visible through the growth in connections to regional airports like Cairns, Gold Coast, and Townsville</li>
-                </ul>
-            </div>
-            
-            <!-- How to Use -->
-            <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
-                <h3>📊 How to Use These Visualizations</h3>
-                <ul>
-                    <li><strong>Year Slider:</strong> Drag to explore data from 1984 to 2019 and observe network evolution</li>
-                    <li><strong>Tooltips:</strong> Hover over any route or bar to see detailed statistics including passenger counts, load factors, and distances</li>
-                    <li><strong>Route Rankings:</strong> Numbers on the map indicate Top 10 ranking - thicker lines represent busier routes</li>
-                    <li><strong>Color Coding:</strong> Darker/warmer colors indicate higher load factors (better seat utilization)</li>
-                    <li><strong>Interactive Legend:</strong> Click on legend items to filter specific data ranges</li>
-                </ul>
-            </div>
-            
-        </div>
-        
-        <!-- Footer -->
-        <div class="footer">
-            <p><strong>Data Source:</strong> <a href="https://data.gov.au" target="_blank">Australian Government Open Data Portal</a></p>
-            <p><strong>Dataset:</strong> Domestic Aviation Activity - City Pairs (1984-2019)</p>
-            <p><strong>Visualization Framework:</strong> Vega-Lite v5 | <strong>Course:</strong> FIT3179 Data Visualization</p>
-            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-                Created with Vega-Lite for Data Visualization 2 Assignment
-            </p>
-        </div>
+        <div class="error-message" id="error"></div>
+        <div class="loading" id="loading">Loading visualization...</div>
+        <div id="vis"></div>
     </div>
 
-    <!-- Embed Visualizations -->
     <script type="text/javascript">
-        // Visualization 1: Flight Network Map
-        vegaEmbed('#vis1', 'Vega/flight_map.json', {
-            "actions": {
-                "export": true,
-                "source": false,
-                "editor": false
-            }
-        }).then(function(result) {
-            console.log("✅ Visualization 1 (Flight Map) loaded successfully!");
-        }).catch(function(error) {
-            console.error("❌ Error loading Visualization 1:", error);
-        });
+        // 显示加载信息
+        document.getElementById('loading').style.display = 'block';
         
-        // Visualization 2: Top 10 Routes
-        vegaEmbed('#vis2', 'Vega/Top10.json', {
-            "actions": {
-                "export": true,
-                "source": false,
-                "editor": false
+        // 使用相对路径引用 flight_map.json
+        // 因为所有文件都在同一文件夹，直接使用文件名即可
+        const spec = 'flight_map.json';
+        
+        // 嵌入 Vega-Lite 可视化
+        vegaEmbed('#vis', spec, {
+            actions: {
+                export: true,
+                source: false,
+                compiled: false,
+                editor: false
             }
         }).then(function(result) {
-            console.log("✅ Visualization 2 (Top 10) loaded successfully!");
+            // 成功加载后隐藏加载信息
+            document.getElementById('loading').style.display = 'none';
+            console.log('Visualization loaded successfully!');
         }).catch(function(error) {
-            console.error("❌ Error loading Visualization 2:", error);
+            // 如果出错，显示错误信息
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerHTML = 
+                '<strong>Error loading visualization:</strong><br>' + 
+                error.message + 
+                '<br><br>Please check:<br>' +
+                '1. All files are uploaded to GitHub<br>' +
+                '2. flight_map.json exists in the same folder as index.html<br>' +
+                '3. Data files (CSV, JSON) are in the same folder';
+            console.error('Vega-Embed Error:', error);
         });
     </script>
 </body>
