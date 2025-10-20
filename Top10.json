@@ -7,7 +7,7 @@
     "contains": "padding"
   },
   "title": {
-    "text": "Australian Domestic Flight Network",
+    "text": "Top 10 Busiest Australian Domestic Routes",
     "fontSize": 22,
     "fontWeight": "bold",
     "subtitle": "December passenger data (1984-2019) | Source: data.gov.au",
@@ -53,16 +53,15 @@
     },
     
     {
-      "data": {"url": "../data/audomcitypairs-201912.csv"},
+      "data": {"url": "audomcitypairs-201912.csv"},
       "transform": [
         {"filter": "datum.Year == year_select"},
         {"filter": "datum.Month_num == 12"},
-        {"filter": "datum.Passenger_Trips > 10000"},
         
         {
           "lookup": "City1",
           "from": {
-            "data": {"url": "../data/cities.json"},
+            "data": {"url": "cities.json"},
             "key": "city",
             "fields": ["lat", "lon"]
           },
@@ -71,13 +70,15 @@
         {
           "lookup": "City2",
           "from": {
-            "data": {"url": "../data/cities.json"},
+            "data": {"url": "cities.json"},
             "key": "city",
             "fields": ["lat", "lon"]
           },
           "as": ["lat2", "lon2"]
         },
         
+        {"filter": "datum.lat1 != null && datum.lon1 != null"},
+        {"filter": "datum.lat2 != null && datum.lon2 != null"},
         {"filter": "datum.lat1 >= -45 && datum.lat1 <= -10"},
         {"filter": "datum.lon1 >= 112 && datum.lon1 <= 155"},
         {"filter": "datum.lat2 >= -45 && datum.lat2 <= -10"},
@@ -86,7 +87,9 @@
         {
           "window": [{"op": "rank", "as": "rank"}],
           "sort": [{"field": "Passenger_Trips", "order": "descending"}]
-        }
+        },
+        
+        {"filter": "datum.rank <= 10"}
       ],
       
       "params": [
@@ -114,22 +117,16 @@
         "latitude2": {"field": "lat2"},
         
         "strokeWidth": {
-          "condition": [
-            {
-              "param": "hover",
-              "empty": false,
-              "value": 18
-            },
-            {
-              "test": "datum.rank <= 3",
-              "value": 12
-            }
-          ],
+          "condition": {
+            "param": "hover",
+            "empty": false,
+            "value": 18
+          },
           "field": "Passenger_Trips",
           "type": "quantitative",
           "scale": {
             "type": "sqrt",
-            "range": [0.5, 10]
+            "range": [2, 12]
           },
           "legend": {
             "title": "Passengers",
@@ -152,7 +149,7 @@
             "empty": false,
             "value": 1
           },
-          "value": 0.7
+          "value": 0.8
         },
         
         "color": {
@@ -160,7 +157,7 @@
           "type": "quantitative",
           "scale": {
             "scheme": "viridis",
-            "domain": [50, 100]
+            "domain": [60, 100]
           },
           "legend": {
             "title": "Load Factor (%)",
@@ -175,10 +172,10 @@
         },
         
         "tooltip": [
+          {"field": "rank", "title": "Rank"},
           {"field": "City1", "title": "From"},
           {"field": "City2", "title": "To"},
           {"field": "Year", "title": "Year"},
-          {"field": "rank", "title": "Rank"},
           {"field": "Passenger_Trips", "title": "Passengers", "format": ","},
           {"field": "Passenger_Load_Factor", "title": "Load Factor", "format": ".1f"},
           {"field": "Distance_GC_(km)", "title": "Distance (km)", "format": ","}
@@ -194,7 +191,7 @@
     },
     
     {
-      "data": {"url": "../data/audomcitypairs-201912.csv"},
+      "data": {"url": "audomcitypairs-201912.csv"},
       "transform": [
         {"filter": "datum.Year == year_select"},
         {"filter": "datum.Month_num == 12"},
@@ -202,7 +199,7 @@
         {
           "lookup": "City1",
           "from": {
-            "data": {"url": "../data/cities.json"},
+            "data": {"url": "cities.json"},
             "key": "city",
             "fields": ["lat", "lon"]
           },
@@ -211,12 +208,19 @@
         {
           "lookup": "City2",
           "from": {
-            "data": {"url": "../data/cities.json"},
+            "data": {"url": "cities.json"},
             "key": "city",
             "fields": ["lat", "lon"]
           },
           "as": ["lat2", "lon2"]
         },
+        
+        {"filter": "datum.lat1 != null && datum.lon1 != null"},
+        {"filter": "datum.lat2 != null && datum.lon2 != null"},
+        {"filter": "datum.lat1 >= -45 && datum.lat1 <= -10"},
+        {"filter": "datum.lon1 >= 112 && datum.lon1 <= 155"},
+        {"filter": "datum.lat2 >= -45 && datum.lat2 <= -10"},
+        {"filter": "datum.lon2 >= 112 && datum.lon2 <= 155"},
         
         {
           "window": [{"op": "rank", "as": "rank"}],
@@ -232,27 +236,23 @@
         {
           "calculate": "(datum.lon1 + datum.lon2) / 2",
           "as": "mid_lon"
-        },
-        {
-          "calculate": "datum.rank",
-          "as": "rank_text"
         }
       ],
       
       "mark": {
         "type": "text",
-        "fontSize": 14,
+        "fontSize": 13,
         "fontWeight": "bold",
         "color": "#ffffff",
         "stroke": "#2c3e50",
-        "strokeWidth": 3,
+        "strokeWidth": 2,
         "filled": true
       },
       
       "encoding": {
         "longitude": {"field": "mid_lon", "type": "quantitative"},
         "latitude": {"field": "mid_lat", "type": "quantitative"},
-        "text": {"field": "rank_text", "type": "ordinal"}
+        "text": {"field": "rank", "type": "ordinal"}
       },
       
       "projection": {
@@ -263,28 +263,18 @@
     },
     
     {
-      "data": {"url": "../data/cities.json"},
-      "transform": [
-        {
-          "calculate": "datum.city == 'SYDNEY' || datum.city == 'MELBOURNE' || datum.city == 'BRISBANE' ? 300 : 200",
-          "as": "point_size"
-        }
-      ],
+      "data": {"url": "cities.json"},
       "mark": {
         "type": "circle",
         "fill": "#e74c3c",
         "stroke": "white",
         "strokeWidth": 2.5,
+        "size": 200,
         "opacity": 0.95
       },
       "encoding": {
         "longitude": {"field": "lon", "type": "quantitative"},
         "latitude": {"field": "lat", "type": "quantitative"},
-        "size": {
-          "field": "point_size",
-          "type": "quantitative",
-          "legend": null
-        },
         "tooltip": {"field": "city", "title": "Airport"}
       },
       "projection": {
@@ -295,7 +285,7 @@
     },
     
     {
-      "data": {"url": "../data/cities.json"},
+      "data": {"url": "cities.json"},
       "transform": [
         {
           "calculate": "upper(substring(datum.city, 0, 1)) + lower(substring(datum.city, 1))",
@@ -304,9 +294,9 @@
       ],
       "mark": {
         "type": "text",
-        "dy": -15,
-        "fontSize": 12,
-        "fontWeight": "bold",
+        "dy": -13,
+        "fontSize": 11,
+        "fontWeight": "600",
         "color": "#2c3e50"
       },
       "encoding": {
@@ -338,26 +328,6 @@
         "x": {"field": "x", "type": "quantitative", "scale": null},
         "y": {"field": "y", "type": "quantitative", "scale": null},
         "text": {"signal": "year_select"}
-      }
-    },
-    
-    {
-      "data": {
-        "values": [
-          {"text": "💡 Numbers on routes show Top 10 ranking", "x": 450, "y": 35}
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "align": "center",
-        "fontSize": 13,
-        "color": "#34495e",
-        "fontStyle": "italic"
-      },
-      "encoding": {
-        "x": {"field": "x", "type": "quantitative", "scale": null},
-        "y": {"field": "y", "type": "quantitative", "scale": null},
-        "text": {"field": "text"}
       }
     }
   ],
