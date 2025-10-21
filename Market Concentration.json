@@ -1,0 +1,110 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 900,
+    "height": 450,
+    "title": {
+      "text": "Market Concentration: Top Routes vs. The Rest",
+      "fontSize": 22,
+      "fontWeight": "bold",
+      "subtitle": "Share of total passengers - Shows market diversification over time | Source: data.gov.au",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#7f8c8d"
+    },
+    
+    "data": {"url": "audomcitypairs-201912.csv"},
+    
+    "transform": [
+      {
+        "aggregate": [
+          {"op": "sum", "field": "Passenger_Trips", "as": "Route_Passengers"}
+        ],
+        "groupby": ["Year", "City1", "City2"]
+      },
+      {
+        "joinaggregate": [
+          {"op": "sum", "field": "Route_Passengers", "as": "Year_Total"}
+        ],
+        "groupby": ["Year"]
+      },
+      {
+        "window": [{"op": "rank", "as": "Route_Rank"}],
+        "groupby": ["Year"],
+        "sort": [{"field": "Route_Passengers", "order": "descending"}]
+      },
+      {
+        "calculate": "datum.Route_Rank == 1 ? 'Top 1 Route (MEL-SYD)' : datum.Route_Rank <= 3 ? 'Top 2-3 Routes' : datum.Route_Rank <= 10 ? 'Top 4-10 Routes' : 'All Other Routes'",
+        "as": "Route_Category"
+      },
+      {
+        "aggregate": [
+          {"op": "sum", "field": "Route_Passengers", "as": "Category_Passengers"}
+        ],
+        "groupby": ["Year", "Route_Category", "Year_Total"]
+      },
+      {
+        "calculate": "(datum.Category_Passengers / datum.Year_Total) * 100",
+        "as": "Market_Share"
+      }
+    ],
+    
+    "mark": {
+      "type": "area",
+      "interpolate": "monotone"
+    },
+    
+    "encoding": {
+      "x": {
+        "field": "Year",
+        "type": "ordinal",
+        "title": "Year",
+        "axis": {
+          "labelAngle": -45,
+          "labelFontSize": 11,
+          "titleFontSize": 14,
+          "titlePadding": 15,
+          "values": [1984, 1990, 1995, 2000, 2005, 2010, 2015, 2019]
+        }
+      },
+      "y": {
+        "field": "Market_Share",
+        "type": "quantitative",
+        "title": "Market Share (%)",
+        "stack": "normalize",
+        "axis": {
+          "labelFontSize": 12,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "format": ".0%"
+        }
+      },
+      "color": {
+        "field": "Route_Category",
+        "type": "nominal",
+        "scale": {
+          "domain": [
+            "Top 1 Route (MEL-SYD)",
+            "Top 2-3 Routes",
+            "Top 4-10 Routes",
+            "All Other Routes"
+          ],
+          "range": ["#e74c3c", "#f39c12", "#3498db", "#95a5a6"]
+        },
+        "legend": {
+          "title": "Route Tier",
+          "titleFontSize": 13,
+          "labelFontSize": 12,
+          "orient": "right"
+        }
+      },
+      "tooltip": [
+        {"field": "Year", "title": "Year"},
+        {"field": "Route_Category", "title": "Category"},
+        {"field": "Market_Share", "title": "Market Share (%)", "format": ".2f"}
+      ]
+    },
+    
+    "config": {
+      "view": {"stroke": "transparent"},
+      "background": "white"
+    }
+  }

@@ -1,0 +1,111 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 900,
+    "height": 500,
+    "title": {
+      "text": "The Sweet Spot: Route Distance vs. Passenger Demand",
+      "fontSize": 22,
+      "fontWeight": "bold",
+      "subtitle": "2019 data | Bubble size = Load Factor (efficiency) | Source: data.gov.au",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#7f8c8d"
+    },
+    
+    "data": {"url": "audomcitypairs-201912.csv"},
+    
+    "transform": [
+      {"filter": "datum.Year == 2019"},
+      {
+        "aggregate": [
+          {"op": "sum", "field": "Passenger_Trips", "as": "Total_Passengers"},
+          {"op": "mean", "field": "Passenger_Load_Factor", "as": "Avg_Load_Factor"},
+          {"op": "mean", "field": "Distance_GC_(km)", "as": "Distance"}
+        ],
+        "groupby": ["City1", "City2"]
+      },
+      {
+        "filter": "datum.Total_Passengers > 50000"
+      },
+      {
+        "calculate": "datum.Distance < 500 ? 'Short (<500km)' : datum.Distance < 1000 ? 'Medium (500-1000km)' : datum.Distance < 2000 ? 'Long (1000-2000km)' : 'Very Long (>2000km)'",
+        "as": "Distance_Category"
+      }
+    ],
+    
+    "mark": {
+      "type": "circle",
+      "opacity": 0.7
+    },
+    
+    "encoding": {
+      "x": {
+        "field": "Distance",
+        "type": "quantitative",
+        "title": "Route Distance (km)",
+        "scale": {"domain": [0, 4500]},
+        "axis": {
+          "labelFontSize": 12,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "grid": true,
+          "gridOpacity": 0.3
+        }
+      },
+      "y": {
+        "field": "Total_Passengers",
+        "type": "quantitative",
+        "title": "Annual Passengers",
+        "scale": {"type": "log"},
+        "axis": {
+          "labelFontSize": 12,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "grid": true,
+          "gridOpacity": 0.3,
+          "format": ".2s"
+        }
+      },
+      "size": {
+        "field": "Avg_Load_Factor",
+        "type": "quantitative",
+        "title": "Avg Load Factor (%)",
+        "scale": {"range": [50, 1000]},
+        "legend": {
+          "titleFontSize": 12,
+          "labelFontSize": 11,
+          "orient": "top-left"
+        }
+      },
+      "color": {
+        "field": "Distance_Category",
+        "type": "nominal",
+        "scale": {
+          "domain": [
+            "Short (<500km)",
+            "Medium (500-1000km)",
+            "Long (1000-2000km)",
+            "Very Long (>2000km)"
+          ],
+          "range": ["#27ae60", "#3498db", "#f39c12", "#e74c3c"]
+        },
+        "legend": {
+          "title": "Distance Category",
+          "titleFontSize": 13,
+          "labelFontSize": 12,
+          "orient": "top-right"
+        }
+      },
+      "tooltip": [
+        {"field": "City1", "title": "From"},
+        {"field": "City2", "title": "To"},
+        {"field": "Distance", "title": "Distance (km)", "format": ".0f"},
+        {"field": "Total_Passengers", "title": "Annual Passengers", "format": ","},
+        {"field": "Avg_Load_Factor", "title": "Avg Load Factor (%)", "format": ".1f"}
+      ]
+    },
+    
+    "config": {
+      "view": {"stroke": "transparent"},
+      "background": "white"
+    }
+  }

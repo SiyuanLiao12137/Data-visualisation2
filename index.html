@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Australian Domestic Flight Analysis | FIT3179 Week 10</title>
+    <title>Australian Domestic Aviation: 35 Years of Growth | FIT3179</title>
     
-    <!-- Vega-Lite 库 -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
@@ -36,76 +35,119 @@
         .header {
             background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
             color: white;
-            padding: 40px;
+            padding: 50px 40px;
             text-align: center;
         }
         
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.8em;
+            margin-bottom: 15px;
             font-weight: 700;
+            line-height: 1.2;
         }
         
         .header p {
-            font-size: 1.2em;
+            font-size: 1.3em;
             opacity: 0.95;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         
         .header .metadata {
-            font-size: 0.95em;
+            font-size: 1em;
             opacity: 0.85;
-            margin-top: 15px;
+            margin-top: 20px;
             font-style: italic;
         }
         
         .content {
-            padding: 40px;
+            padding: 50px 40px;
+        }
+        
+        .intro-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 30px;
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
+            border-radius: 15px;
+        }
+        
+        .intro-section h2 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .intro-section p {
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
         }
         
         .section {
-            margin-bottom: 50px;
+            margin-bottom: 70px;
         }
         
         .section-title {
-            font-size: 1.8em;
+            font-size: 2em;
             color: #2c3e50;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid #3498db;
         }
         
         .section-description {
-            font-size: 1.1em;
+            font-size: 1.15em;
             color: #555;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            padding: 15px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            padding: 20px;
             background: #f8f9fa;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
+            border-left: 5px solid #3498db;
+            border-radius: 8px;
         }
         
         .vis-container {
             background: #fafafa;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            min-height: 400px;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+            border-left: 6px solid #f39c12;
+        }
+        
+        .highlight-box h3 {
+            color: #e67e22;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+        
+        .highlight-box p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.1em;
         }
         
         .info-box {
             background: #e8f4f8;
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 30px;
-            border-left: 5px solid #3498db;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            border-left: 6px solid #3498db;
         }
         
         .info-box h3 {
             color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-size: 1.5em;
         }
         
         .info-box ul {
@@ -114,27 +156,27 @@
         }
         
         .info-box li {
-            padding: 10px 0;
+            padding: 12px 0;
             color: #555;
-            line-height: 1.7;
-            font-size: 1.05em;
+            line-height: 1.8;
+            font-size: 1.1em;
         }
         
         .info-box li:before {
             content: "✈️ ";
-            margin-right: 10px;
+            margin-right: 12px;
         }
         
         .footer {
             background: #34495e;
             color: white;
             text-align: center;
-            padding: 30px;
+            padding: 35px;
         }
         
         .footer p {
-            margin: 8px 0;
-            font-size: 0.95em;
+            margin: 10px 0;
+            font-size: 1em;
         }
         
         .footer a {
@@ -148,168 +190,210 @@
         }
         
         .divider {
-            height: 2px;
+            height: 3px;
             background: linear-gradient(to right, transparent, #3498db, transparent);
-            margin: 40px 0;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #7f8c8d;
-        }
-        
-        .error {
-            color: #e74c3c;
-            padding: 20px;
-            background: #fadbd8;
-            border-radius: 5px;
-            border-left: 4px solid #e74c3c;
+            margin: 50px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
-            <h1>✈️ Australian Domestic Flight Analysis</h1>
-            <p>Interactive Visualization of Flight Networks & Route Rankings</p>
+            <h1>✈️ Australian Domestic Aviation: Three Decades of Growth</h1>
+            <p>Exploring 35 Years of Flight Data (1984-2019)</p>
             <div class="metadata">
-                FIT3179 Week 10 Homework | Data Visualization 2
+                FIT3179 Data Visualisation 2 | Author: Siyuan Liao | ID:34019553
             </div>
         </div>
         
-        <!-- Content -->
         <div class="content">
             
-            <!-- Visualization 1: Flight Network Map -->
+            <div class="intro-section">
+                <h2>The Australian Aviation Story</h2>
+                <p>
+                    From 1984 to 2019, Australian domestic aviation has experienced remarkable transformation. 
+                    This interactive analysis explores how passenger demand evolved, which routes dominated the market, 
+                    and how external events shaped the industry's trajectory. Through data visualization, we uncover 
+                    the patterns behind Australia's connected skies.
+                </p>
+            </div>
+            
+            <!-- Section 1: Growth Trends -->
             <div class="section">
-                <h2 class="section-title">📍 Visualization 1: Flight Network Map</h2>
+                <h2 class="section-title">📈 Chapter 1: The Growth Journey</h2>
                 <div class="section-description">
-                    This interactive map visualizes the Australian domestic flight network from 1984 to 2019. 
-                    The width of each line represents passenger volume, while the color indicates the load factor 
-                    (seat occupancy rate). Use the year slider to explore how the network evolved over 35 years.
-                    Hover over routes to see detailed statistics.
+                    Australian domestic aviation didn't grow steadily—it experienced booms, busts, and remarkable resilience. 
+                    This visualization reveals how major economic events and industry changes shaped passenger growth over 35 years.
                 </div>
                 <div class="vis-container">
-                    <div id="vis1">
-                        <div class="loading">Loading visualization...</div>
-                    </div>
+                    <div id="vis-growth"></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>💡 Key Turning Points</h3>
+                    <p>
+                        The data reveals critical moments: the 1989 recession, the 2000 Virgin entry that sparked competition, 
+                        the dual shock of 9/11 and Ansett's collapse in 2002, and the 2009 Global Financial Crisis. 
+                        Yet the industry consistently recovered, showing remarkable resilience.
+                    </p>
                 </div>
             </div>
             
             <div class="divider"></div>
             
-            <!-- Visualization 2: Top 10 Routes -->
+            <!-- Section 2: Market Concentration -->
             <div class="section">
-                <h2 class="section-title">🏆 Visualization 2: Top 10 Busiest Routes</h2>
+                <h2 class="section-title">🎯 Chapter 2: Market Power Dynamics</h2>
                 <div class="section-description">
-                    This geographic visualization highlights only the Top 10 busiest domestic routes with numbered rankings 
-                    displayed on each route. The line thickness represents passenger volume, and colors show load factor 
-                    efficiency. Drag the year slider to observe how route rankings shifted over time, revealing changes 
-                    in Australia's aviation market structure.
+                    Not all routes are equal. This stacked area chart shows how market share has been distributed 
+                    between the top routes and hundreds of smaller connections. Has the market become more concentrated 
+                    or diversified over time?
                 </div>
                 <div class="vis-container">
-                    <div id="vis2">
-                        <div class="loading">Loading visualization...</div>
-                    </div>
+                    <div id="vis-concentration"></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>💡 The Melbourne-Sydney Dominance</h3>
+                    <p>
+                        The Melbourne-Sydney corridor has consistently captured a significant share of total passengers, 
+                        often described as one of the world's busiest domestic routes. However, the data shows gradual 
+                        diversification as regional routes gained importance over the decades.
+                    </p>
                 </div>
             </div>
             
-            <!-- Key Insights -->
-            <div class="info-box">
-                <h3>🔍 Key Insights</h3>
-                <ul>
-                    <li><strong>Sydney-Melbourne corridor</strong> has consistently dominated as the busiest route since 1984, often carrying over 1 million passengers annually</li>
-                    <li><strong>Passenger volumes</strong> have grown dramatically - from ~500K in 1984 to over 1.5M by 2019 on major routes</li>
-                    <li><strong>Load factors</strong> improved significantly from ~70% to 85%+, indicating airlines became more efficient at filling seats</li>
-                    <li><strong>Eastern seaboard</strong> (Sydney-Melbourne-Brisbane triangle) dominates with the highest passenger traffic and frequency</li>
-                    <li><strong>Network expansion</strong> is visible through growth in connections to regional airports like Cairns, Gold Coast, and Townsville</li>
-                    <li><strong>Perth routes</strong> show increasing importance, reflecting Western Australia's economic growth and isolation from the eastern states</li>
-                </ul>
+            <div class="divider"></div>
+            
+            <!-- Section 3: Hub Hierarchy -->
+            <div class="section">
+                <h2 class="section-title">🏙️ Chapter 3: The Hub Hierarchy</h2>
+                <div class="section-description">
+                    Australia's aviation network is built around major hubs. This ranking reveals which cities 
+                    serve as the critical connection points, categorized by the number of routes they serve.
+                </div>
+                <div class="vis-container">
+                    <div id="vis-hubs"></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>💡 The Big Three Dominance</h3>
+                    <p>
+                        Sydney, Melbourne, and Brisbane form the backbone of Australia's domestic network, 
+                        each serving over 200 route connections. These major hubs enable the spoke-and-hub 
+                        model that connects smaller cities across the vast continent.
+                    </p>
+                </div>
             </div>
             
-            <!-- How to Use -->
-            <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
-                <h3>📊 How to Use These Visualizations</h3>
+            <div class="divider"></div>
+            
+            <!-- Section 4: Interactive Network Map -->
+            <div class="section">
+                <h2 class="section-title">🗺️ Chapter 4: The Living Network</h2>
+                <div class="section-description">
+                    Watch the Australian aviation network come alive. This interactive map shows all domestic routes, 
+                    with line thickness representing passenger volume and color showing operational efficiency (load factor). 
+                    Use the year slider to explore how the network evolved from 1984 to 2019.
+                </div>
+                <div class="vis-container">
+                    <div id="vis-network"></div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Section 5: Top 10 Routes -->
+            <div class="section">
+                <h2 class="section-title">🏆 Chapter 5: The Championship Routes</h2>
+                <div class="section-description">
+                    Which routes carry the most passengers? This focused view highlights only the Top 10 busiest routes 
+                    each year, complete with rankings. Observe how competition and demand shifted these rankings over time.
+                </div>
+                <div class="vis-container">
+                    <div id="vis-top10"></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>💡 Eastern Triangle Dominance</h3>
+                    <p>
+                        The Sydney-Melbourne-Brisbane triangle consistently dominates the top rankings. These routes benefit 
+                        from high business travel demand, large populations, and frequent service. Perth routes also feature 
+                        prominently due to Western Australia's geographic isolation and strong economy.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Section 6: Seasonal Patterns -->
+            <div class="section">
+                <h2 class="section-title">🌡️ Chapter 6: Seasonal Rhythms</h2>
+                <div class="section-description">
+                    Aviation demand follows predictable seasonal patterns. This heatmap reveals monthly passenger volumes 
+                    from 2015-2019, showing when Australians take to the skies and when the industry faces quieter periods.
+                </div>
+                <div class="vis-container">
+                    <div id="vis-seasonal"></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>💡 Holiday Rush and Winter Lull</h3>
+                    <p>
+                        December and January consistently show peak demand as Australians travel for summer holidays. 
+                        School vacation periods (April, July, September) also show elevated traffic. In contrast, 
+                        June-August represents the quieter winter months, creating clear seasonal planning challenges 
+                        for airlines.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Key Insights Summary -->
+            <div class="info-box">
+                <h3>🔍 Key Insights: The Australian Aviation Story</h3>
                 <ul>
-                    <li><strong>Year Slider:</strong> Drag to explore data from 1984 to 2019 and observe network evolution over 35 years</li>
-                    <li><strong>Tooltips:</strong> Hover over any route to see detailed statistics including passenger counts, rankings, load factors, and distances</li>
-                    <li><strong>Route Rankings:</strong> In Visualization 2, numbers on routes indicate Top 10 ranking - thicker lines represent busier routes</li>
-                    <li><strong>Color Coding:</strong> Darker/warmer colors indicate higher load factors (better seat utilization and operational efficiency)</li>
-                    <li><strong>Interactive Features:</strong> Routes highlight on hover for easier identification and comparison</li>
+                    <li><strong>Resilient Growth:</strong> Despite economic shocks, passenger volumes grew from around 15 million in 1984 to over 60 million by 2019</li>
+                    <li><strong>Melbourne-Sydney Corridor:</strong> Consistently the busiest route, carrying over 9 million passengers annually in recent years</li>
+                    <li><strong>Hub Concentration:</strong> Sydney, Melbourne, and Brisbane dominate with 200+ route connections each, serving as critical network hubs</li>
+                    <li><strong>Load Factor Improvements:</strong> Airlines became significantly more efficient, with average load factors rising from ~70% to 85%+</li>
+                    <li><strong>Network Expansion:</strong> The number of routes and cities served increased substantially, particularly to regional destinations</li>
+                    <li><strong>Perth's Isolation Premium:</strong> Routes to Perth consistently rank in the top 10 due to Western Australia's geographic isolation</li>
+                    <li><strong>Seasonal Volatility:</strong> December-January peak traffic is 20-30% higher than winter months, creating capacity planning challenges</li>
+                    <li><strong>Market Diversification:</strong> While top routes remain dominant, smaller regional routes have grown in importance over time</li>
                 </ul>
             </div>
             
         </div>
         
-        <!-- Footer -->
         <div class="footer">
             <p><strong>Data Source:</strong> <a href="https://data.gov.au" target="_blank">Australian Government Open Data Portal</a></p>
             <p><strong>Dataset:</strong> Domestic Aviation Activity - City Pairs (1984-2019)</p>
             <p><strong>Author:</strong> Bureau of Infrastructure and Transport Research Economics (BITRE)</p>
-            <p><strong>Visualization Framework:</strong> Vega-Lite v5 | <strong>Course:</strong> FIT3179 Data Visualization</p>
-            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-                Created for Data Visualization 2 Assignment | Monash University
+            <p><strong>Visualization:</strong> Vega-Lite v5 | <strong>Course:</strong> FIT3179 Data Visualisation 2</p>
+            <p style="margin-top: 20px; font-size: 0.95em; opacity: 0.85;">
+                Created for Data Visualisation 2 Assignment | Monash University | 2025
             </p>
         </div>
     </div>
 
-    <!-- Embed Visualizations -->
     <script type="text/javascript">
-        // 获取当前页面的完整路径
-        function getBasePath() {
-            const path = window.location.pathname;
-            const dir = path.substring(0, path.lastIndexOf('/') + 1);
-            return window.location.origin + dir;
-        }
-        
-        // 尝试多种路径方式加载
-        function loadVisualization(elementId, filename, visualizationName) {
-            const paths = [
-                // 方式1: 相对路径
-                './' + filename,
-                // 方式2: 绝对路径
-                getBasePath() + filename,
-                // 方式3: GitHub raw (备用)
-                'https://raw.githubusercontent.com/siyuanliao12137/Data-visualisation2/main/' + filename
-            ];
-            
-            let currentPathIndex = 0;
-            
-            function tryLoad() {
-                if (currentPathIndex >= paths.length) {
-                    document.getElementById(elementId).innerHTML = 
-                        '<div class="error">❌ Failed to load ' + filename + 
-                        '<br><br>Please check that the file exists in the repository.</div>';
-                    return;
+        function embedVisualization(elementId, filename) {
+            vegaEmbed('#' + elementId, filename, {
+                "actions": {
+                    "export": true,
+                    "source": false,
+                    "editor": false
                 }
-                
-                const currentPath = paths[currentPathIndex];
-                console.log(`Trying to load ${filename} from: ${currentPath}`);
-                
-                vegaEmbed('#' + elementId, currentPath, {
-                    "actions": {
-                        "export": true,
-                        "source": false,
-                        "editor": false
-                    }
-                }).then(function(result) {
-                    console.log(`✅ ${visualizationName} loaded successfully from: ${currentPath}`);
-                }).catch(function(error) {
-                    console.warn(`❌ Failed to load from ${currentPath}:`, error.message);
-                    currentPathIndex++;
-                    tryLoad();
-                });
-            }
-            
-            tryLoad();
+            }).catch(console.error);
         }
         
-        // 页面加载完成后执行
         window.addEventListener('DOMContentLoaded', function() {
-            loadVisualization('vis1', 'flight_map.json', 'Flight Network Map');
-            loadVisualization('vis2', 'Top10.json', 'Top 10 Routes');
+            embedVisualization('vis-growth', 'Australian Domestic Aviation.json');
+            embedVisualization('vis-concentration', 'Market Concentration.json');
+            embedVisualization('vis-hubs', "Australia's Aviation Hub Hierarchy.json");
+            embedVisualization('vis-network', 'flight_map.json');
+            embedVisualization('vis-top10', 'Top10.json');
+            embedVisualization('vis-seasonal', 'Seasonality.json');
         });
     </script>
 </body>

@@ -1,0 +1,106 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 900,
+    "height": 400,
+    "title": {
+      "text": "Australian Domestic Flight Seasonal Patterns (2015-2019)",
+      "fontSize": 22,
+      "fontWeight": "bold",
+      "subtitle": "Total monthly passenger volume across all routes | Source: data.gov.au",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#7f8c8d"
+    },
+    
+    "data": {"url": "audomcitypairs-201912.csv"},
+    
+    "transform": [
+      {"filter": "datum.Year >= 2015 && datum.Year <= 2019"},
+      {
+        "aggregate": [
+          {"op": "sum", "field": "Passenger_Trips", "as": "Total_Passengers"}
+        ],
+        "groupby": ["Year", "Month_num"]
+      },
+      {
+        "calculate": "datum.Total_Passengers / 1000000",
+        "as": "Passengers_Millions"
+      },
+      {
+        "calculate": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][datum.Month_num - 1]",
+        "as": "Month_Name"
+      }
+    ],
+    
+    "mark": {
+      "type": "rect",
+      "stroke": "white",
+      "strokeWidth": 2
+    },
+    
+    "encoding": {
+      "x": {
+        "field": "Month_Name",
+        "type": "ordinal",
+        "title": "Month",
+        "sort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "axis": {
+          "labelAngle": 0,
+          "labelFontSize": 13,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "labelFontWeight": "bold"
+        }
+      },
+      
+      "y": {
+        "field": "Year",
+        "type": "ordinal",
+        "title": "Year",
+        "sort": "descending",
+        "axis": {
+          "labelFontSize": 14,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "labelFontWeight": "bold"
+        }
+      },
+      
+      "color": {
+        "field": "Passengers_Millions",
+        "type": "quantitative",
+        "title": ["Passengers", "(Millions)"],
+        "scale": {
+          "scheme": "oranges",
+          "domainMin": 4.0,
+          "domainMax": 6.0
+        },
+        "legend": {
+          "orient": "right",
+          "direction": "vertical",
+          "titleFontSize": 13,
+          "labelFontSize": 11,
+          "gradientLength": 250,
+          "gradientThickness": 20,
+          "titleLimit": 100
+        }
+      },
+      
+      "tooltip": [
+        {"field": "Year", "title": "Year", "type": "ordinal"},
+        {"field": "Month_Name", "title": "Month", "type": "nominal"},
+        {"field": "Total_Passengers", "title": "Total Passengers", "format": ","},
+        {"field": "Passengers_Millions", "title": "Passengers (M)", "format": ".2f"}
+      ]
+    },
+    
+    "config": {
+      "view": {
+        "stroke": "transparent"
+      },
+      "axis": {
+        "domain": false,
+        "grid": false,
+        "ticks": false
+      }
+    }
+  }

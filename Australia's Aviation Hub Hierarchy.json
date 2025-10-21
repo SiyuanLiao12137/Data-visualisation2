@@ -1,0 +1,93 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 700,
+    "height": 450,
+    "title": {
+      "text": "Australia's Aviation Hub Hierarchy (2019)",
+      "fontSize": 22,
+      "fontWeight": "bold",
+      "subtitle": "Number of route connections per city | Larger hubs = More connectivity | Source: data.gov.au",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#7f8c8d"
+    },
+    
+    "data": {"url": "audomcitypairs-201912.csv"},
+    
+    "transform": [
+      {"filter": "datum.Year == 2019"},
+      {
+        "fold": ["City1", "City2"],
+        "as": ["type", "City"]
+      },
+      {
+        "aggregate": [
+          {"op": "count", "as": "Route_Count"}
+        ],
+        "groupby": ["City"]
+      },
+      {
+        "window": [{"op": "rank", "as": "rank"}],
+        "sort": [{"field": "Route_Count", "order": "descending"}]
+      },
+      {"filter": "datum.rank <= 10"},
+      {
+        "calculate": "datum.Route_Count >= 200 ? 'Major Hub' : datum.Route_Count >= 100 ? 'Regional Hub' : 'Secondary Hub'",
+        "as": "Hub_Type"
+      }
+    ],
+    
+    "mark": {
+      "type": "bar",
+      "cornerRadiusEnd": 4
+    },
+    
+    "encoding": {
+      "y": {
+        "field": "City",
+        "type": "nominal",
+        "title": null,
+        "sort": {"field": "Route_Count", "order": "descending"},
+        "axis": {
+          "labelFontSize": 13,
+          "labelFontWeight": "bold",
+          "labelPadding": 10
+        }
+      },
+      "x": {
+        "field": "Route_Count",
+        "type": "quantitative",
+        "title": "Number of Route Connections",
+        "axis": {
+          "labelFontSize": 12,
+          "titleFontSize": 14,
+          "titlePadding": 10,
+          "grid": false
+        }
+      },
+      "color": {
+        "field": "Hub_Type",
+        "type": "nominal",
+        "scale": {
+          "domain": ["Major Hub", "Regional Hub", "Secondary Hub"],
+          "range": ["#e74c3c", "#f39c12", "#3498db"]
+        },
+        "legend": {
+          "title": "Hub Category",
+          "titleFontSize": 13,
+          "labelFontSize": 12,
+          "orient": "top-right"
+        }
+      },
+      "tooltip": [
+        {"field": "City", "title": "City"},
+        {"field": "Route_Count", "title": "Route Connections"},
+        {"field": "Hub_Type", "title": "Hub Type"}
+      ]
+    },
+    
+    "config": {
+      "view": {"stroke": "transparent"},
+      "background": "white",
+      "bar": {"discreteBandSize": 35}
+    }
+  }

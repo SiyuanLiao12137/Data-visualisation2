@@ -10,7 +10,7 @@
     "text": "Top 10 Busiest Australian Domestic Routes",
     "fontSize": 22,
     "fontWeight": "bold",
-    "subtitle": "December passenger data (1984-2019) | Source: data.gov.au",
+    "subtitle": "Based on annual total passenger data (1984-2019) | Source: data.gov.au",
     "subtitleFontSize": 12,
     "subtitleColor": "#7f8c8d"
   },
@@ -56,7 +56,15 @@
       "data": {"url": "audomcitypairs-201912.csv"},
       "transform": [
         {"filter": "datum.Year == year_select"},
-        {"filter": "datum.Month_num == 12"},
+        
+        {
+          "aggregate": [
+            {"op": "sum", "field": "Passenger_Trips", "as": "Total_Passengers"},
+            {"op": "mean", "field": "Passenger_Load_Factor", "as": "Avg_Load_Factor"},
+            {"op": "mean", "field": "Distance_GC_(km)", "as": "Avg_Distance"}
+          ],
+          "groupby": ["City1", "City2", "Year"]
+        },
         
         {
           "lookup": "City1",
@@ -86,7 +94,7 @@
         
         {
           "window": [{"op": "rank", "as": "rank"}],
-          "sort": [{"field": "Passenger_Trips", "order": "descending"}]
+          "sort": [{"field": "Total_Passengers", "order": "descending"}]
         },
         
         {"filter": "datum.rank <= 10"}
@@ -122,14 +130,14 @@
             "empty": false,
             "value": 18
           },
-          "field": "Passenger_Trips",
+          "field": "Total_Passengers",
           "type": "quantitative",
           "scale": {
             "type": "sqrt",
             "range": [2, 12]
           },
           "legend": {
-            "title": "Passengers",
+            "title": "Annual Passengers",
             "orient": "top-left",
             "direction": "horizontal",
             "format": ".2s",
@@ -153,14 +161,14 @@
         },
         
         "color": {
-          "field": "Passenger_Load_Factor",
+          "field": "Avg_Load_Factor",
           "type": "quantitative",
           "scale": {
             "scheme": "viridis",
             "domain": [60, 100]
           },
           "legend": {
-            "title": "Load Factor (%)",
+            "title": "Avg Load Factor (%)",
             "orient": "top-right",
             "direction": "horizontal",
             "format": ".0f",
@@ -176,9 +184,9 @@
           {"field": "City1", "title": "From"},
           {"field": "City2", "title": "To"},
           {"field": "Year", "title": "Year"},
-          {"field": "Passenger_Trips", "title": "Passengers", "format": ","},
-          {"field": "Passenger_Load_Factor", "title": "Load Factor", "format": ".1f"},
-          {"field": "Distance_GC_(km)", "title": "Distance (km)", "format": ","}
+          {"field": "Total_Passengers", "title": "Annual Passengers", "format": ","},
+          {"field": "Avg_Load_Factor", "title": "Avg Load Factor", "format": ".1f"},
+          {"field": "Avg_Distance", "title": "Distance (km)", "format": ",.0f"}
         ]
       },
       
@@ -194,7 +202,13 @@
       "data": {"url": "audomcitypairs-201912.csv"},
       "transform": [
         {"filter": "datum.Year == year_select"},
-        {"filter": "datum.Month_num == 12"},
+        
+        {
+          "aggregate": [
+            {"op": "sum", "field": "Passenger_Trips", "as": "Total_Passengers"}
+          ],
+          "groupby": ["City1", "City2", "Year"]
+        },
         
         {
           "lookup": "City1",
@@ -224,7 +238,7 @@
         
         {
           "window": [{"op": "rank", "as": "rank"}],
-          "sort": [{"field": "Passenger_Trips", "order": "descending"}]
+          "sort": [{"field": "Total_Passengers", "order": "descending"}]
         },
         
         {"filter": "datum.rank <= 10"},

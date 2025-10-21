@@ -1,0 +1,217 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 900,
+    "height": 500,
+    "title": {
+      "text": "Australian Domestic Aviation: Year-over-Year Growth Rate",
+      "fontSize": 22,
+      "fontWeight": "bold",
+      "subtitle": "Annual percentage change in total passengers (1985-2019) | Source: data.gov.au",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#7f8c8d"
+    },
+    
+    "data": {"url": "audomcitypairs-201912.csv"},
+    
+    "transform": [
+      {
+        "aggregate": [
+          {"op": "sum", "field": "Passenger_Trips", "as": "Total_Passengers"}
+        ],
+        "groupby": ["Year"]
+      },
+      {
+        "window": [
+          {"op": "lag", "field": "Total_Passengers", "as": "Previous_Year"}
+        ],
+        "sort": [{"field": "Year"}]
+      },
+      {
+        "calculate": "((datum.Total_Passengers - datum.Previous_Year) / datum.Previous_Year) * 100",
+        "as": "Growth_Rate"
+      },
+      {
+        "filter": "datum.Previous_Year != null"
+      },
+      {
+        "calculate": "datum.Growth_Rate >= 0 ? 'Positive' : 'Negative'",
+        "as": "Growth_Type"
+      }
+    ],
+    
+    "layer": [
+      {
+        "mark": {
+          "type": "rule",
+          "strokeWidth": 2,
+          "strokeDash": [5, 5],
+          "color": "#95a5a6"
+        },
+        "encoding": {
+          "y": {"datum": 0}
+        }
+      },
+      
+      {
+        "mark": {
+          "type": "bar",
+          "width": {"band": 0.7}
+        },
+        "encoding": {
+          "x": {
+            "field": "Year",
+            "type": "ordinal",
+            "title": "Year",
+            "axis": {
+              "labelAngle": -45,
+              "labelFontSize": 11,
+              "titleFontSize": 14,
+              "titlePadding": 15
+            }
+          },
+          "y": {
+            "field": "Growth_Rate",
+            "type": "quantitative",
+            "title": "Year-over-Year Growth Rate (%)",
+            "scale": {"domain": [-26, 35]},
+            "axis": {
+              "labelFontSize": 12,
+              "titleFontSize": 14,
+              "titlePadding": 10,
+              "grid": true,
+              "gridOpacity": 0.3
+            }
+          },
+          "color": {
+            "field": "Growth_Type",
+            "type": "nominal",
+            "scale": {
+              "domain": ["Positive", "Negative"],
+              "range": ["#27ae60", "#e74c3c"]
+            },
+            "legend": {
+              "title": "Growth Direction",
+              "orient": "top-right",
+              "titleFontSize": 12,
+              "labelFontSize": 11
+            }
+          },
+          "tooltip": [
+            {"field": "Year", "title": "Year"},
+            {"field": "Total_Passengers", "title": "Total Passengers", "format": ","},
+            {"field": "Growth_Rate", "title": "Growth Rate (%)", "format": ".2f"}
+          ]
+        }
+      },
+      
+      {
+        "transform": [
+          {
+            "filter": "datum.Year == 1989 || datum.Year == 2002"
+          },
+          {
+            "calculate": "datum.Year == 1989 ? 'Recession' : '9/11 & Ansett'",
+            "as": "label"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "fontSize": 10,
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "color": "#e74c3c",
+          "dy": 15
+        },
+        "encoding": {
+          "x": {"field": "Year", "type": "ordinal"},
+          "y": {"field": "Growth_Rate", "type": "quantitative"},
+          "text": {"field": "label"}
+        }
+      },
+      
+      {
+        "transform": [
+          {
+            "filter": "datum.Year == 2009"
+          },
+          {
+            "calculate": "'GFC'",
+            "as": "label"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "fontSize": 10,
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "color": "#e74c3c",
+          "dy": -12
+        },
+        "encoding": {
+          "x": {"field": "Year", "type": "ordinal"},
+          "y": {"field": "Growth_Rate", "type": "quantitative"},
+          "text": {"field": "label"}
+        }
+      },
+      
+      {
+        "transform": [
+          {
+            "filter": "datum.Year == 2000 || datum.Year == 1991 || datum.Year == 2004"
+          },
+          {
+            "calculate": "datum.Year == 2000 ? 'Virgin Entry' : datum.Year == 1991 ? 'Recovery' : 'Boom'",
+            "as": "label"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "fontSize": 10,
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "color": "#27ae60",
+          "dy": -12
+        },
+        "encoding": {
+          "x": {"field": "Year", "type": "ordinal"},
+          "y": {"field": "Growth_Rate", "type": "quantitative"},
+          "text": {"field": "label"}
+        }
+      },
+      
+      {
+        "data": {
+          "values": [
+            {"text": "Strong Growth Period", "x": 850, "y": 30},
+            {"text": "Decline Period", "x": 850, "y": -20}
+          ]
+        },
+        "mark": {
+          "type": "text",
+          "align": "right",
+          "fontSize": 11,
+          "fontWeight": "bold"
+        },
+        "encoding": {
+          "x": {"field": "x", "type": "quantitative", "scale": null},
+          "y": {"field": "y", "type": "quantitative"},
+          "text": {"field": "text"},
+          "color": {
+            "condition": {
+              "test": "datum.y > 0",
+              "value": "#27ae60"
+            },
+            "value": "#e74c3c"
+          }
+        }
+      }
+    ],
+    
+    "config": {
+      "view": {"stroke": "transparent"},
+      "background": "white"
+    }
+  }
