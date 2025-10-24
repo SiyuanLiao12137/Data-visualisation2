@@ -185,7 +185,7 @@
       {
         "data": {
           "values": [
-            {"text": "Strong Growth Period", "x": 850, "y": 30},
+            {"text": "Strong Growth Period", "x": 850, "y": 20},
             {"text": "Decline Period", "x": 850, "y": -20}
           ]
         },
